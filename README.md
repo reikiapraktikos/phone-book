@@ -1,2 +1,6 @@
-# phone-book
-Simple phone book app
+# Phone book
+
+## Set up
+```console
+make init
+```

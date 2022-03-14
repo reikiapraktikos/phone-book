@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  app:
+    container_name: app
+    build: .
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+  mysql:
+    container_name: mysql
+    platform: linux/x86_64 # for Apple M1 chip
+    image: mysql:8.0
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: phone_book
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+
+volumes:
+  db_data: {}
