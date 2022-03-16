@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
+use App\Entity\Record;
 use App\Entity\RecordUser;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,17 +17,13 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method RecordUser[]    findAll()
  * @method RecordUser[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RecordUserRepository extends ServiceEntityRepository
+final class RecordUserRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, RecordUser::class);
     }
 
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
     public function add(RecordUser $entity, bool $flush = true): void
     {
         $this->_em->persist($entity);
@@ -33,15 +32,30 @@ class RecordUserRepository extends ServiceEntityRepository
         }
     }
 
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
     public function remove(RecordUser $entity, bool $flush = true): void
     {
         $this->_em->remove($entity);
         if ($flush) {
             $this->_em->flush();
         }
+    }
+
+    /**
+     * @param Record $record
+     * @param User $user
+     * @return RecordUser|null
+     * @throws NonUniqueResultException
+     */
+    public function findOneByRecordAndNonOwnerUser(Record $record, User $user): ?RecordUser
+    {
+        return $this
+            ->createQueryBuilder('recordUser')
+            ->where(
+                'recordUser.user = :user AND recordUser.record = :record AND recordUser.isOwner = false'
+            )
+            ->setParameter('user', $user)
+            ->setParameter('record', $record)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

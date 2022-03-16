@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\RecordRepository;
@@ -8,7 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RecordRepository::class)]
-class Record
+final class Record
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -21,7 +23,7 @@ class Record
     #[ORM\Column(type: 'string', length: 255)]
     private $number;
 
-    #[ORM\OneToMany(mappedBy: 'record', targetEntity: RecordUser::class)]
+    #[ORM\OneToMany(mappedBy: 'record', targetEntity: RecordUser::class, cascade: ['persist'])]
     private $recordUsers;
 
     public function __construct()
@@ -71,18 +73,6 @@ class Record
         if (!$this->recordUsers->contains($recordUser)) {
             $this->recordUsers[] = $recordUser;
             $recordUser->setRecord($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRecordUser(RecordUser $recordUser): self
-    {
-        if ($this->recordUsers->removeElement($recordUser)) {
-            // set the owning side to null (unless already changed)
-            if ($recordUser->getRecord() === $this) {
-                $recordUser->setRecord(null);
-            }
         }
 
         return $this;

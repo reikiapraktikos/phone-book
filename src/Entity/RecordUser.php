@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\RecordUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RecordUserRepository::class)]
-class RecordUser
+final class RecordUser
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -34,7 +36,7 @@ class RecordUser
         return $this->record;
     }
 
-    public function setRecord(?Record $record): self
+    public function setRecord(Record $record): self
     {
         $this->record = $record;
 
@@ -46,7 +48,7 @@ class RecordUser
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function setUser(User $user): self
     {
         $this->user = $user;
 

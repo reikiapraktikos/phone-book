@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Record;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,17 +16,13 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Record[]    findAll()
  * @method Record[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RecordRepository extends ServiceEntityRepository
+final class RecordRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Record::class);
     }
 
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
     public function add(Record $entity, bool $flush = true): void
     {
         $this->_em->persist($entity);
@@ -33,15 +31,44 @@ class RecordRepository extends ServiceEntityRepository
         }
     }
 
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
     public function remove(Record $entity, bool $flush = true): void
     {
         $this->_em->remove($entity);
         if ($flush) {
             $this->_em->flush();
         }
+    }
+
+    /**
+     * @param User $user
+     * @param int $id
+     * @return Record|null
+     * @throws NonUniqueResultException
+     */
+    public function findOneByOwnerUserAndId(User $user, int $id): ?Record
+    {
+        return $this
+            ->createQueryBuilder('record')
+            ->join('record.recordUsers', 'recordUsers')
+            ->where('recordUsers.user = :user AND record.id = :id AND recordUsers.isOwner = true')
+            ->setParameter('user', $user)
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @param User $user
+     * @return Record[]
+     */
+    public function findAllByUser(User $user): array
+    {
+        return $this
+            ->createQueryBuilder('record')
+            ->join('record.recordUsers', 'recordUsers')
+            ->where('recordUsers.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
     }
 }
