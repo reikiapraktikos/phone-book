@@ -16,7 +16,7 @@ POST 127.0.0.1:8000/api/register
 
 ## Login
 ```console
-POST 127.0.0.1:8000/api/register
+POST 127.0.0.1:8000/api/login
 {
     "email": "<email>",
     "password": "<password>"
