@@ -49,7 +49,6 @@ final class RecordController
                     'number' => $record->getNumber()
                 ];
             }
-
         } catch (Exception $e) {
             return new JsonResponse($e->getMessage(), 400);
         }
