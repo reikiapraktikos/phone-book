@@ -25,6 +25,21 @@ services:
       MYSQL_DATABASE: phone_book
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin
+  mysql_test:
+    container_name: mysql_test
+    platform: linux/x86_64 # for Apple M1 chip
+    image: mysql:8.0
+    volumes:
+      - db_data_test:/var/lib/mysql
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: phone_book
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
 
 volumes:
   db_data: {}
+  db_data_test: {}

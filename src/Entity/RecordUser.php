@@ -8,7 +8,8 @@ use App\Repository\RecordUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RecordUserRepository::class)]
-final class RecordUser
+#[ORM\UniqueConstraint(name: 'record_user', columns: ['record_id', 'user_id'])]
+class RecordUser
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -16,7 +17,7 @@ final class RecordUser
     private $id;
 
     #[ORM\ManyToOne(targetEntity: Record::class, inversedBy: 'recordUsers')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'cascade')]
     private $record;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'recordUsers')]

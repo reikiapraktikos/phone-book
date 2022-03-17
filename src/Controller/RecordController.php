@@ -87,14 +87,13 @@ final class RecordController
         return new JsonResponse(Message::RECORD_UPDATED->value);
     }
 
-    #[Route('', name: 'record_delete', methods: ['DELETE'])]
-    public function delete(Request $request): JsonResponse
+    #[Route('/{id}', name: 'record_delete', methods: ['DELETE'])]
+    public function delete(Request $request, int $id): JsonResponse
     {
         try {
             /** @var User $authenticatedUser */
             $authenticatedUser = $this->getAuthenticatedUserHandler->handle();
-            $recordArray = json_decode($request->getContent(), true);
-            $this->deleteRecordHandler->handle($authenticatedUser, $recordArray);
+            $this->deleteRecordHandler->handle($authenticatedUser, $id);
         } catch (Exception $e) {
             return new JsonResponse($e->getMessage(), 400);
         }

@@ -18,14 +18,14 @@ final class DeleteRecordHandler
 
     /**
      * @param User $user
-     * @param array $recordArray
+     * @param int $id
      * @return void
      * @throws CustomException
      */
-    public function handle(User $user, array $recordArray): void
+    public function handle(User $user, int $id): void
     {
         try {
-            $record = $this->recordRepository->findOneByOwnerUserAndId($user, $recordArray['id']);
+            $record = $this->recordRepository->findOneByOwnerUserAndId($user, $id);
 
             if ($record === null) {
                 throw new CustomException(ExceptionMessage::RECORD_NOT_FOUND->value);

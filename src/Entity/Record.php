@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RecordRepository::class)]
-final class Record
+class Record
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
